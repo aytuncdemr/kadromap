@@ -10,5 +10,5 @@ export interface User {
     occupation: string;
     departmentName: string;
     date: string;
-    _id: ObjectId;
+    _id?: ObjectId;
 }

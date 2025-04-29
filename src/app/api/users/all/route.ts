@@ -16,7 +16,18 @@ export async function GET(request: Request) {
             .find({})
             .toArray()) as unknown as User[];
 
-        return new Response(JSON.stringify(userDocuments), { status: 200 });
+        const userDocumentsExcludedPasswords = userDocuments.map(
+            (userDocument) => {
+                const { password, ...userDocumentWithoutPassword } =
+                    userDocument;
+
+                return userDocumentWithoutPassword;
+            }
+        );
+
+        return new Response(JSON.stringify(userDocumentsExcludedPasswords), {
+            status: 200,
+        });
     } catch (error) {
         if (error instanceof Error) {
             return new Response(JSON.stringify({ message: error.message }), {

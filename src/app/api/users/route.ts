@@ -10,7 +10,11 @@ export async function GET(request: Request) {
         const userId = await getUserIdFromToken(request);
         const user = await getUserFromId(userId);
 
-        return new Response(JSON.stringify(user), { status: 200 });
+        const { password, ...userExcludedPassword } = user;
+
+        return new Response(JSON.stringify(userExcludedPassword), {
+            status: 200,
+        });
     } catch (error) {
         if (error instanceof Error) {
             return new Response(JSON.stringify({ message: error.message }), {

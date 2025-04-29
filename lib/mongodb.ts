@@ -1,12 +1,13 @@
 import { MongoClient, Db } from "mongodb";
 
 const uri = process.env.MONGODB_URI as string;
-const client = new MongoClient(uri);
 
+let client: MongoClient | null = null;
 let db: Db | null = null;
 
 export async function mongodb() {
-    if (!db) {
+    if (!client || !db) {
+        client = new MongoClient(uri);
         await client.connect();
         db = client.db("kadromap");
     }
@@ -17,5 +18,5 @@ export async function mongodb() {
     const notes = db.collection("notes");
     const events = db.collection("events");
 
-    return { db, users, messages, departments, notes, events };
+    return { db, client, users, messages, departments, notes, events };
 }

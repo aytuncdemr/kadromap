@@ -37,7 +37,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
     try {
         const userId = await getUserIdFromToken(request);
-        const body = await request.json() as Department;
+        const body = (await request.json()) as Department;
         if (!checkIsAdmin(userId)) {
             throw new Error("Bu api route için yetkiniz bulunmamaktadır.");
         }
