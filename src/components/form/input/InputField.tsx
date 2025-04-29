@@ -15,8 +15,9 @@ interface InputProps {
     success?: boolean;
     error?: boolean;
     hint?: string; // Optional hint text
-    value: string;
+    value?: string;
     required?: boolean;
+    children?:React.ReactNode;
 }
 
 const Input: FC<InputProps> = ({
@@ -35,6 +36,7 @@ const Input: FC<InputProps> = ({
     success = false,
     error = false,
     required = true,
+    children,
     hint,
 }) => {
     // Determine input styles based on state (disabled, success, error)
@@ -68,7 +70,7 @@ const Input: FC<InputProps> = ({
                 required={required}
                 className={inputClasses}
             />
-
+            {children}
             {/* Optional Hint Text */}
             {hint && (
                 <p

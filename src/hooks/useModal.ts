@@ -1,12 +1,65 @@
 "use client";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useContext } from "react";
+import { User } from "../../interfaces/User";
+import axios, { isAxiosError } from "axios";
+import { toast } from "react-toastify";
+import { AuthContext } from "@/context/AuthContext";
 
-export const useModal = (initialState: boolean = false) => {
-  const [isOpen, setIsOpen] = useState(initialState);
+export const useModal = (
+    initialState: boolean = false,
+    user?: User,
+    setUser?: React.Dispatch<React.SetStateAction<User | null>>
+) => {
+    const [isOpen, setIsOpen] = useState(initialState);
 
-  const openModal = useCallback(() => setIsOpen(true), []);
-  const closeModal = useCallback(() => setIsOpen(false), []);
-  const toggleModal = useCallback(() => setIsOpen((prev) => !prev), []);
+    const [userEdit, setUserEdit] = useState<User>(user as User);
+    const [showPassword, setShowPassword] = useState(false);
 
-  return { isOpen, openModal, closeModal, toggleModal };
+    const openModal = useCallback(() => setIsOpen(true), []);
+    const closeModal = useCallback(() => {
+        setUserEdit(user as User);
+        setShowPassword(false);
+        setIsOpen(false);
+    }, []);
+    const toggleModal = useCallback(() => setIsOpen((prev) => !prev), []);
+    const authContext = useContext(AuthContext);
+
+    const handleSave = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        try {
+            const { data } = await axios.put("/api/users", userEdit, {
+                headers: {
+                    Authorization: `Bearer ${authContext?.token}`,
+                },
+            });
+            if (setUser) {
+                setUser(null); // to activate re-fetching of user-data
+            }
+            toast.success(data.message);
+        } catch (error) {
+            if (isAxiosError(error)) {
+                toast.error(error.response?.data.message || error.message);
+            } else if (error instanceof Error) {
+                toast.error(error.message);
+            } else {
+                console.log(error);
+                toast.error("Bir şeyler ters gitti");
+            }
+        } finally {
+            closeModal();
+        }
+    };
+
+    return {
+        isOpen,
+        openModal,
+        closeModal,
+        toggleModal,
+        userEdit,
+        setUserEdit,
+        showPassword,
+        setShowPassword,
+        handleSave,
+    };
 };

@@ -23,9 +23,11 @@ export default function SignInForm() {
     });
     const authContext = useContext(AuthContext);
     const router = useRouter();
+
     async function loginHandler(e: FormEvent) {
         e.preventDefault();
         try {
+            console.log("ww");
             const { data: token } = await axios.post("/api/login", loginData);
 
             if (rememberMe) {
@@ -149,7 +151,7 @@ export default function SignInForm() {
                                     </div>
                                 </div>
                                 <div>
-                                    <Button className="w-full" size="sm">
+                                    <Button type="submit" className="w-full" size="sm">
                                         Giriş Yap
                                     </Button>
                                 </div>

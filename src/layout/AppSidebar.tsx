@@ -392,24 +392,24 @@ const AppSidebar: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        try {
-            async function getUserData() {
+        async function getUserData() {
+            try {
                 const { data } = await axios.get("/api/users", {
                     headers: { Authorization: `Bearer ${authContext?.token}` },
                 });
                 setUser(data);
-            }
-            getUserData();
-        } catch (error) {
-            if (isAxiosError(error)) {
-                toast.error(error.response?.data.message || error.message);
-            } else if (error instanceof Error) {
-                toast.error(error.message);
-            } else {
-                console.log(error);
-                toast.error("Bir şeyler ters gitti");
+            } catch (error) {
+                if (isAxiosError(error)) {
+                    toast.error(error.response?.data.message || error.message);
+                } else if (error instanceof Error) {
+                    toast.error(error.message);
+                } else {
+                    console.log(error);
+                    toast.error("Bir şeyler ters gitti");
+                }
             }
         }
+        setInterval(getUserData, 5000);
     }, []);
 
     return (

@@ -150,7 +150,7 @@ const AppHeader: React.FC = () => {
                 }
             }
         }
-        getKeywords();
+         getKeywords();
     }, []);
 
     return (

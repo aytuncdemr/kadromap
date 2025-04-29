@@ -7,14 +7,23 @@ import getUserFromId from "../../../../lib/getUserFromId";
 
 export async function GET(request: Request) {
     try {
+        const { searchParams } = new URL(request.url);
+        const withPassword = searchParams.get("with-password");
+
         const userId = await getUserIdFromToken(request);
         const user = await getUserFromId(userId);
 
-        const { password, ...userExcludedPassword } = user;
+        if (withPassword !== "true") {
+            const { password, ...userExcludedPassword } = user;
 
-        return new Response(JSON.stringify(userExcludedPassword), {
-            status: 200,
-        });
+            return new Response(JSON.stringify(userExcludedPassword), {
+                status: 200,
+            });
+        } else {
+            return new Response(JSON.stringify(user), {
+                status: 200,
+            });
+        }
     } catch (error) {
         if (error instanceof Error) {
             return new Response(JSON.stringify({ message: error.message }), {

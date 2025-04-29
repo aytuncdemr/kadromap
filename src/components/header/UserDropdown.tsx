@@ -44,7 +44,7 @@ export default function UserDropdown() {
                 }
             }
         }
-        getUserData();
+        setInterval(() => getUserData(), 5000);
     }, []);
 
     if (!user) {
