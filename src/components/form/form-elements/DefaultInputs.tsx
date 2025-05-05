@@ -1,120 +1,190 @@
 "use client";
-import React, { useState } from 'react';
-import ComponentCard from '../../common/ComponentCard';
-import Label from '../Label';
-import Input from '../input/InputField';
-import Select from '../Select';
-import { ChevronDownIcon, EyeCloseIcon, EyeIcon, TimeIcon } from '../../../icons';
-import DatePicker from '@/components/form/date-picker';
+import React, { FormEvent, useContext, useEffect, useState } from "react";
+import ComponentCard from "../../common/ComponentCard";
+import Label from "../Label";
+import Input from "../input/InputField";
+import Select from "../Select";
+import { ChevronDownIcon } from "../../../icons";
+import axios, { isAxiosError } from "axios";
+import { toast } from "react-toastify";
+import { AuthContext } from "@/context/AuthContext";
+import { User } from "../../../../interfaces/User";
+import getTodayDate from "../../../../lib/getTodayDate";
+import Button from "@/components/ui/button/Button";
+import { send } from "process";
 
 export default function DefaultInputs() {
-  const [showPassword, setShowPassword] = useState(false);
-  const options = [
-    { value: "marketing", label: "Marketing" },
-    { value: "template", label: "Template" },
-    { value: "development", label: "Development" },
-  ];
-  const handleSelectChange = (value: string) => {
-    console.log("Selected value:", value);
-  };
-  return (
-    <ComponentCard title="Default Inputs">
-      <div className="space-y-6">
-        <div>
-          <Label>Input</Label>
-          <Input type="text" />
-        </div>
-        <div>
-          <Label>Input with Placeholder</Label>
-          <Input type="text" placeholder="info@gmail.com" />
-        </div>
-        <div>
-          <Label>Select Input</Label>
-          <div className="relative">
-            <Select
-            options={options}
-            placeholder="Select an option"
-            onChange={handleSelectChange}
-            className="dark:bg-dark-900"
-          />
-             <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
-              <ChevronDownIcon/>
-            </span>
-          </div>
-        </div>
-        <div>
-          <Label>Password Input</Label>
-          <div className="relative">
-            <Input
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
-            />
-            <button
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-            >
-              {showPassword ? (
-                <EyeIcon className="fill-gray-500 dark:fill-gray-400" />
-              ) : (
-                <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400" />
-              )}
-            </button>
-          </div>
-        </div>
+    const handleSelectChange = (value: string) => {
+        setMessage((prevMessage) => ({ ...prevMessage, to: value }));
+    };
+    const authContext = useContext(AuthContext);
+    const [user, setUser] = useState<User | null>(null);
+    const [userEmails, setUserEmails] = useState<
+        { value: string; label: string }[] | null
+    >(null);
+    const [message, setMessage] = useState({
+        title: "",
+        content: "",
+        date: getTodayDate(),
+        fromEmail: "",
+        to: "",
+        departmentName: "",
+        occupation: "",
+        isRead: false,
+    });
+    useEffect(() => {
+        async function getUser() {
+            try {
+                const { data } = await axios.get("/api/users", {
+                    headers: {
+                        Authorization: `Bearer ${authContext?.token}`,
+                    },
+                });
+                setUser(data);
+            } catch (error) {
+                if (isAxiosError(error)) {
+                    toast.error(error.response?.data.message || error.message);
+                } else if (error instanceof Error) {
+                    toast.error(error.message);
+                } else {
+                    console.log(error);
+                    toast.error("Bir şeyler ters gitti");
+                }
+            }
+        }
+        async function getEmails() {
+            try {
+                const { data } = await axios.get("/api/users/emails", {
+                    headers: {
+                        Authorization: `Bearer ${authContext?.token}`,
+                    },
+                });
+                setUserEmails(
+                    data.map((email: string) => ({
+                        label: email,
+                        value: email,
+                    }))
+                );
+            } catch (error) {
+                if (isAxiosError(error)) {
+                    toast.error(error.response?.data.message || error.message);
+                } else if (error instanceof Error) {
+                    toast.error(error.message);
+                } else {
+                    console.log(error);
+                    toast.error("Bir şeyler ters gitti");
+                }
+            }
+        }
 
-        <div>
-          <DatePicker
-            id="date-picker"
-            label="Date Picker Input"
-            placeholder="Select a date"
-            onChange={(dates, currentDateString) => {
-              // Handle your logic
-              console.log({ dates, currentDateString });
-            }}
-          />
-        </div>
+        getUser();
+        getEmails();
+    }, []);
 
-        <div>
-          <Label htmlFor="tm">Time Picker Input</Label>
-          <div className="relative">
-            <Input
-              type="time"
-              id="tm"
-              name="tm"
-              onChange={(e) => console.log(e.target.value)}
-            />
-            <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
-              <TimeIcon />
-            </span>
-          </div>
-        </div>
-        <div>
-          <Label htmlFor="tm">Input with Payment</Label>
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder="Card number"
-              className="pl-[62px]"
-            />
-            <span className="absolute left-0 top-1/2 flex h-11 w-[46px] -translate-y-1/2 items-center justify-center border-r border-gray-200 dark:border-gray-800">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle cx="6.25" cy="10" r="5.625" fill="#E80B26" />
-                <circle cx="13.75" cy="10" r="5.625" fill="#F59D31" />
-                <path
-                  d="M10 14.1924C11.1508 13.1625 11.875 11.6657 11.875 9.99979C11.875 8.33383 11.1508 6.8371 10 5.80713C8.84918 6.8371 8.125 8.33383 8.125 9.99979C8.125 11.6657 8.84918 13.1625 10 14.1924Z"
-                  fill="#FC6020"
-                />
-              </svg>
-            </span>
-          </div>
-        </div>
-      </div>
-    </ComponentCard>
-  );
+    useEffect(() => {
+        if (user) {
+            setMessage((prevMessage) => {
+                return {
+                    ...prevMessage,
+                    fromEmail: user.email,
+                    fromName: user.name + " " + user.lastName,
+                    departmentName: user.departmentName,
+                    occupation: user.occupation,
+                };
+            });
+        }
+    }, [user]);
+
+    async function submitHandler(e: FormEvent) {
+        e.preventDefault();
+
+        try {
+            if (!message.to) {
+                throw new Error("Lütfen bir alıcı seçiniz");
+            }
+
+            const { data } = await axios.post("/api/messages", message, {
+                headers: {
+                    Authorization: `Bearer ${authContext?.token}`,
+                },
+            });
+            toast.success(data.message);
+            setMessage({
+                title: "",
+                content: "",
+                date: getTodayDate(),
+                fromEmail: "",
+                to: "",
+                departmentName: "",
+                occupation: "",
+                isRead: false,
+            });
+            
+        } catch (error) {
+            if (isAxiosError(error)) {
+                toast.error(error.response?.data.message || error.message);
+            } else if (error instanceof Error) {
+                toast.error(error.message);
+            } else {
+                console.log(error);
+                toast.error("Bir şeyler ters gitti");
+            }
+        }
+    }
+    return (
+        <ComponentCard title="Yeni Mesaj Gönder">
+            <form onSubmit={submitHandler} className="space-y-6">
+                <div>
+                    <Label>Başlık</Label>
+                    <Input
+                        required
+                        onChange={(e) =>
+                            setMessage((prevMessage) => ({
+                                ...prevMessage,
+                                title: e.target.value,
+                            }))
+                        }
+                        type="text"
+                        value={message.title}
+                    />
+                </div>
+
+                <div>
+                    <Label>Gönderilen Kişi</Label>
+                    <div className="relative">
+                        <Select
+                            value={message.to}
+                            options={userEmails || []}
+                            placeholder="Bir kişi seçiniz"
+                            onChange={handleSelectChange}
+                            className="dark:bg-dark-900"
+                            
+                        />
+                        <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
+                            <ChevronDownIcon />
+                        </span>
+                    </div>
+                </div>
+                <div>
+                    <Label>Mesaj</Label>
+                    <div className="relative">
+                        <textarea
+                            required
+                            onChange={(e) =>
+                                setMessage((prevMessage) => {
+                                    return {
+                                        ...prevMessage,
+                                        content: e.target.value,
+                                    };
+                                })
+                            }
+                            value={message.content}
+                            className={`min-h-[350px] w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 outline-none bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800`}
+                        ></textarea>
+                    </div>
+                </div>
+                <Button type="submit">Gönder</Button>
+            </form>
+        </ComponentCard>
+    );
 }

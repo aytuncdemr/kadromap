@@ -95,7 +95,7 @@ const AppHeader: React.FC = () => {
                     },
                     {
                         label: "Yeni Mesaj Ekle",
-                        path: "/mesajlar/mesaj-ekle",
+                        path: "/mesajlar/mesaj-gonder",
                     },
                     {
                         label: "Gelen mesajlarımı görüntüle",

@@ -19,22 +19,20 @@ export default function SignUpForm() {
         name: "",
         lastName: "",
         phone: "",
-        occupation: "",
-        departmentName: "",
+        occupation: "Atama yapılmamış",
+        departmentName: "Atama yapılmamış",
         email: "",
         password: "",
         city: "",
-        date: "",
+        date: getTodayDate(),
     });
 
     const router = useRouter();
 
     async function signUpHandler(e: FormEvent) {
         e.preventDefault();
-
         try {
             const { data } = await axios.post("/api/users", user);
-
             if (rememberMe) {
                 localStorage.setItem("email", user.email);
                 localStorage.setItem("password", user.password || "");
@@ -43,7 +41,7 @@ export default function SignUpForm() {
                 localStorage.removeItem("password");
             }
 
-            toast.success(data.message, { className: "z-[9999]" });
+            toast.success(data.message);
 
             setTimeout(() => {
                 router.push("/");
@@ -141,10 +139,9 @@ export default function SignUpForm() {
                                             onChange={(e) =>
                                                 setUser({
                                                     ...user,
-                                                    phone: e.target.value.slice(
-                                                        0,
-                                                        11
-                                                    ),
+                                                    phone: e.target.value
+                                                        .replace(/\D/g, "")
+                                                        .slice(0, 11),
                                                 })
                                             }
                                         />
@@ -241,7 +238,10 @@ export default function SignUpForm() {
                                 </div>
                                 {/* <!-- Button --> */}
                                 <div>
-                                    <button className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
+                                    <button
+                                        type="submit"
+                                        className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600"
+                                    >
                                         Kayıt ol
                                     </button>
                                 </div>

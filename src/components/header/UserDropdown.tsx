@@ -44,7 +44,14 @@ export default function UserDropdown() {
                 }
             }
         }
-        setInterval(() => getUserData(), 5000);
+
+        if(!user){
+            getUserData();
+        }
+
+        const intervalId = setInterval(() => getUserData(), 5000);
+
+        return () => clearInterval(intervalId);
     }, []);
 
     if (!user) {

@@ -50,7 +50,7 @@ export async function POST(request: Request) {
             throw new Error("Bu emaili başka bir kullanıcı zaten kullanmakta.");
         }
 
-        users.insertOne(body);
+        await users.insertOne(body);
 
         return new Response(
             JSON.stringify({ message: "Başarıyla kayıt olundu." }),

@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+.toast {
+    z-index: 100000;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @theme {

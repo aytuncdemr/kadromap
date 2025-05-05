@@ -22,7 +22,7 @@ export default function RootLayout({
                     <ThemeProvider>
                         <SidebarProvider>{children}</SidebarProvider>
                     </ThemeProvider>
-                    <ToastContainer></ToastContainer>
+                    <ToastContainer newestOnTop style={{zIndex:100000}}></ToastContainer>
                 </AuthProvider>
             </body>
         </html>

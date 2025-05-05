@@ -27,12 +27,12 @@ export default function AuthLayout({
                                         height={48}
                                         src="/images/logos/kadromap-logo.png"
                                         alt="Logo"
-                                        className="mb-3"
                                     />
                                 </Link>
-                                <p className="text-center text-lg text-gray-400 dark:text-white/60">
-                                    Kadromap ile daha düzgün, efektif ve
-                                    güvenilir bir çalışma ortamı edinin!
+                                <p className="text-center text-gray-400 dark:text-white/60">
+                                    Kadromap ile daha organize, hızlı ve kolay
+                                    iletişim kurulabilen bir çalışma ortamı
+                                    edinin!
                                 </p>
                             </div>
                         </div>

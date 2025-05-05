@@ -47,7 +47,7 @@ department: name,employees,chief,date
 /giris
 /kayit-ol
 /hesabim
-/mesajlarim
+/mesajlar
 /mesaj-gonder
 /takvim
 /event-olustur (admin)

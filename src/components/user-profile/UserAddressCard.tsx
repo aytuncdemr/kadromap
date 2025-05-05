@@ -9,23 +9,16 @@ import { User } from "../../../interfaces/User";
 import { EyeCloseIcon, EyeIcon } from "@/icons";
 import { cities } from "../../../data/cities";
 
-export default function UserAddressCard({
-    user,
-    setUser,
-}: {
-    user: User;
-    setUser: React.Dispatch<React.SetStateAction<User | null>>;
-}) {
+export default function UserAddressCard({ user }: { user: User }) {
     const {
         isOpen,
-        openModal,
         closeModal,
         userEdit,
         showPassword,
         setUserEdit,
         setShowPassword,
         handleSave,
-    } = useModal(false, user, setUser);
+    } = useModal(false, user);
 
     return (
         <>

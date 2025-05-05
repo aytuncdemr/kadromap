@@ -8,23 +8,16 @@ import Label from "../form/Label";
 import { User } from "../../../interfaces/User";
 import { EyeCloseIcon, EyeIcon } from "@/icons";
 
-export default function UserInfoCard({
-    user,
-    setUser,
-}: {
-    user: User;
-    setUser: React.Dispatch<React.SetStateAction<User | null>>;
-}) {
+export default function UserInfoCard({ user }: { user: User }) {
     const {
         isOpen,
-        openModal,
         closeModal,
         userEdit,
         showPassword,
         setUserEdit,
         setShowPassword,
         handleSave,
-    } = useModal(false, user, setUser);
+    } = useModal(false, user);
 
     return (
         <div className="p-5 border border-gray-200 rounded-2xl dark:border-gray-800 lg:p-6">
@@ -77,7 +70,7 @@ export default function UserInfoCard({
                                 <span className="text-red-600">*</span>
                             </p>
                             <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                                {user.departmentName}/
+                                {user.departmentName || "Atama yapılmamış"}/
                             </p>
                         </div>
                         <div>
@@ -86,7 +79,7 @@ export default function UserInfoCard({
                                 <span className="text-red-600">*</span>
                             </p>
                             <p className="text-sm font-medium text-gray-800 dark:text-white/90">
-                                {user.occupation}
+                                {user.occupation || "Atama yapılmamış"}
                             </p>
                         </div>
                         <div>

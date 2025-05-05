@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { use } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
@@ -10,13 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 import { EyeCloseIcon, EyeIcon } from "@/icons";
 
-export default function UserMetaCard({
-    user,
-    setUser,
-}: {
-    setUser: React.Dispatch<React.SetStateAction<User | null>>;
-    user: User;
-}) {
+export default function UserMetaCard({ user }: { user: User }) {
     const {
         isOpen,
         openModal,
@@ -26,7 +20,7 @@ export default function UserMetaCard({
         setUserEdit,
         setShowPassword,
         handleSave,
-    } = useModal(false, user, setUser);
+    } = useModal(false, user);
 
     return (
         <>
@@ -36,20 +30,20 @@ export default function UserMetaCard({
                         <div className="w-20 h-20 flex items-center justify-center overflow-hidden border border-gray-200 rounded-full dark:border-gray-800">
                             <FontAwesomeIcon
                                 icon={faCircleUser}
-                                className="text-4xl xl:text-xl"
+                                className="text-4xl xl:text-5xl"
                             ></FontAwesomeIcon>
                         </div>
                         <div className="order-3 xl:order-2">
                             <h4 className="mb-2 text-lg font-semibold text-center text-gray-800 dark:text-white/90 xl:text-left">
-                                {userEdit.name + " " + userEdit.lastName}
+                                {user.name + " " + user.lastName}
                             </h4>
                             <div className="flex flex-col items-center gap-1 text-center xl:flex-row xl:gap-3 xl:text-left">
                                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                                    {userEdit.occupation}
+                                    {user.occupation}
                                 </p>
                                 <div className="hidden h-3.5 w-px bg-gray-300 dark:bg-gray-700 xl:block"></div>
                                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                                    {userEdit.city + " / Türkiye"}
+                                    {user.city + " / Türkiye"}
                                 </p>
                             </div>
                         </div>

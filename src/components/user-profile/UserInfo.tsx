@@ -24,7 +24,7 @@ export default function UserInfo() {
                         },
                     }
                 );
-            
+
                 setUser(data);
             } catch (error) {
                 if (isAxiosError(error)) {
@@ -37,10 +37,15 @@ export default function UserInfo() {
                 }
             }
         }
-        if (!user) {
+
+        if(!user){
             getUserData();
         }
-    }, [user]);
+
+        const intervalId = setInterval(() => getUserData(), 5000);
+
+        return () => clearInterval(intervalId);
+    }, []);
 
     if (!user) {
         return null;
@@ -48,9 +53,9 @@ export default function UserInfo() {
 
     return (
         <>
-            <UserMetaCard setUser={setUser} user={user} />
-            <UserInfoCard setUser={setUser} user={user} />
-            <UserAddressCard setUser={setUser} user={user} />
+            <UserMetaCard user={user} />
+            <UserInfoCard user={user} />
+            <UserAddressCard user={user} />
         </>
     );
 }

@@ -40,7 +40,6 @@ const AppSidebar: React.FC = () => {
     const pathname = usePathname();
 
     const authContext = useContext(AuthContext);
-
     const [navItems, setNavItems] = useState<(NavItem | null)[]>([]);
     const router = useRouter();
     const othersItems: NavItem[] = [];
@@ -304,8 +303,11 @@ const AppSidebar: React.FC = () => {
                         ),
                         name: "Mesajlar",
                         subItems: [
-                            { name: "Mesajlarım", path: "/mesajlarim" },
-                            { name: "Mesaj Gönder", path: "/mesaj-gonder" },
+                            { name: "Mesajlarım", path: "/mesajlar" },
+                            {
+                                name: "Yeni Mesaj Gönder",
+                                path: "/mesajlar/mesaj-gonder",
+                            },
                         ],
                     },
                     {
@@ -409,7 +411,14 @@ const AppSidebar: React.FC = () => {
                 }
             }
         }
-        setInterval(getUserData, 5000);
+
+        if (!user) {
+            getUserData();
+        }
+
+        const intervalId = setInterval(() => getUserData(), 5000);
+
+        return () => clearInterval(intervalId);
     }, []);
 
     return (
@@ -461,7 +470,7 @@ const AppSidebar: React.FC = () => {
                         <>
                             <div
                                 onClick={() => router.push("/hesabim")}
-                                className="flex dark:text-white dark:hover:bg-gray-700 cursor-pointer hover:bg-gray-100 duration-150 gap-6 items-center p-2 border rounded-lg mb-4"
+                                className="flex dark:text-white dark:hover:bg-gray-700 cursor-pointer hover:bg-gray-100 duration-150 gap-4 items-center p-1 border rounded-lg mb-4"
                             >
                                 <div>
                                     <FontAwesomeIcon
@@ -474,23 +483,6 @@ const AppSidebar: React.FC = () => {
                                     <p>{user?.email}</p>
                                 </div>
                             </div>
-                            {user.departmentName && user.occupation && (
-                                <div
-                                    onClick={() => router.push("/hesabim")}
-                                    className="flex cursor-pointer dark:text-white dark:hover:bg-gray-700  hover:bg-gray-100 duration-150 gap-6 items-center p-2 border rounded-lg mb-4"
-                                >
-                                    <div>
-                                        <FontAwesomeIcon
-                                            className="text-xl xl:text-2xl text-gray-500"
-                                            icon={faBuildingUser}
-                                        ></FontAwesomeIcon>
-                                    </div>
-                                    <div className="flex flex-col gap-2">
-                                        <p>{user?.departmentName} Departmanı</p>
-                                        <p>{user?.occupation}</p>
-                                    </div>
-                                </div>
-                            )}
                         </>
                     )}
                     <div className="flex flex-col gap-4">

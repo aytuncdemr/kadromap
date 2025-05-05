@@ -5,11 +5,7 @@ import axios, { isAxiosError } from "axios";
 import { toast } from "react-toastify";
 import { AuthContext } from "@/context/AuthContext";
 
-export const useModal = (
-    initialState: boolean = false,
-    user?: User,
-    setUser?: React.Dispatch<React.SetStateAction<User | null>>
-) => {
+export const useModal = (initialState: boolean = false, user?: User) => {
     const [isOpen, setIsOpen] = useState(initialState);
 
     const [userEdit, setUserEdit] = useState<User>(user as User);
@@ -33,9 +29,7 @@ export const useModal = (
                     Authorization: `Bearer ${authContext?.token}`,
                 },
             });
-            if (setUser) {
-                setUser(null); // to activate re-fetching of user-data
-            }
+
             toast.success(data.message);
         } catch (error) {
             if (isAxiosError(error)) {

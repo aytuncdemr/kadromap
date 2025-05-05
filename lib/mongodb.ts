@@ -1,22 +1,37 @@
 import { MongoClient, Db } from "mongodb";
 
 const uri = process.env.MONGODB_URI as string;
+const dbName = "kadromap";
 
-let client: MongoClient | null = null;
-let db: Db | null = null;
+interface MongoCache {
+  client: MongoClient;
+  db: Db;
+}
+
+declare global {
+  var mongo: MongoCache | undefined;
+}
+
+const globalWithMongo = globalThis as typeof globalThis & { mongo?: MongoCache };
 
 export async function mongodb() {
-    if (!client || !db) {
-        client = new MongoClient(uri);
-        await client.connect();
-        db = client.db("kadromap");
-    }
+  if (!globalWithMongo.mongo) {
+    const client = new MongoClient(uri);
+    await client.connect();
+    const db = client.db(dbName);
 
-    const users = db.collection("users");
-    const messages = db.collection("messages");
-    const departments = db.collection("departments");
-    const notes = db.collection("notes");
-    const events = db.collection("events");
+    globalWithMongo.mongo = { client, db };
+  }
 
-    return { db, client, users, messages, departments, notes, events };
+  const { client, db } = globalWithMongo.mongo;
+
+  return {
+    client,
+    db,
+    users: db.collection("users"),
+    messages: db.collection("messages"),
+    departments: db.collection("departments"),
+    notes: db.collection("notes"),
+    events: db.collection("events"),
+  };
 }
