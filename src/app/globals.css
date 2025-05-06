@@ -3,6 +3,13 @@
 .toast {
     z-index: 100000;
 }
+.fc .fc-col-header-cell {
+    text-align: center !important;
+}
+
+.fc-timegrid-axis-cushion.fc-scrollgrid-shrink-cushion{
+    text-align: center;
+}
 
 @custom-variant dark (&:is(.dark *));
 

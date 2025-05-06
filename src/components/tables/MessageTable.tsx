@@ -19,6 +19,7 @@ import axios, { isAxiosError } from "axios";
 import { toast } from "react-toastify";
 import { AuthContext } from "@/context/AuthContext";
 import { User } from "../../../interfaces/User";
+import stringToRGB from "../../../lib/stringToRGB";
 
 export default function BasicTableOne({
     messages,
@@ -298,17 +299,4 @@ export default function BasicTableOne({
             )}
         </div>
     );
-}
-
-function stringToRGB(str: string) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-
-    const r = (hash >> 0) & 0xff;
-    const g = (hash >> 8) & 0xff;
-    const b = (hash >> 16) & 0xff;
-
-    return `rgb(${r}, ${g}, ${b})`;
 }
