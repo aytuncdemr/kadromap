@@ -6,7 +6,7 @@ import { Message } from "../../../interfaces/Message";
 import axios, { isAxiosError } from "axios";
 import { toast } from "react-toastify";
 import ComponentCard from "../common/ComponentCard";
-import BasicTableOne from "../tables/MessageTable";
+import MessageTable from "../tables/MessageTable";
 import { User } from "../../../interfaces/User";
 
 export default function Messages() {
@@ -50,25 +50,25 @@ export default function Messages() {
         return () => clearInterval(intervalId);
     }, []);
 
-    if (!messages || !user) {
+    if (!messages || !user) {
         return null;
     }
 
     return (
         <>
             <ComponentCard title="Alınan Mesajlar">
-                <BasicTableOne
-                    messages={messages.filter(
-                        (message) => message.to === user?.email
-                    )}
+                <MessageTable
+                    messages={messages
+                        .filter((message) => message.to === user?.email)
+                        .reverse()}
                     user={user}
                 />
             </ComponentCard>
             <ComponentCard title="Gönderilen Mesajlar">
-                <BasicTableOne
-                    messages={messages.filter(
-                        (message) => message.fromEmail === user?.email
-                    )}
+                <MessageTable
+                    messages={messages
+                        .filter((message) => message.fromEmail === user?.email)
+                        .reverse()}
                     user={user}
                 />
             </ComponentCard>

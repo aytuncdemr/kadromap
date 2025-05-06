@@ -331,7 +331,7 @@ const AppSidebar: React.FC = () => {
                         ),
                         subItems: [
                             { name: "Notları görüntüle", path: "/notlar" },
-                            { name: "Not Ekle", path: "/not-ekle" },
+                            { name: "Not Ekle", path: "/notlar/not-ekle" },
                         ],
                     },
                     userType === "Admin"
