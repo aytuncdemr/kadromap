@@ -55,7 +55,7 @@ export default function Departments() {
                 toast.error("Bir şeyler ters gitti");
                 console.log(error);
             }
-        }finally{
+        } finally {
             setEditingDepartment(null);
             setIsOpen(false);
         }
@@ -105,13 +105,19 @@ export default function Departments() {
                 }
             }
         }
-        const getUserEmailsIntervalID = setInterval(getUserEmails,4000);
-        const getDepartmentsIntervalID = setInterval(getDepartments,4000);
+
+        if (!userEmails || !departments) {
+            getUserEmails();
+            getDepartments();
+        }
+
+        const getUserEmailsIntervalID = setInterval(getUserEmails, 4000);
+        const getDepartmentsIntervalID = setInterval(getDepartments, 4000);
 
         return () => {
             clearInterval(getUserEmailsIntervalID);
             clearInterval(getDepartmentsIntervalID);
-        }
+        };
     }, []);
 
     if (!userEmails) {
@@ -237,6 +243,7 @@ export default function Departments() {
                                         <div className="relative">
                                             <Select
                                                 defaultValue=""
+                                                value=""
                                                 options={userEmails || []}
                                                 placeholder="Bir kişi seçiniz"
                                                 onChange={
@@ -256,8 +263,6 @@ export default function Departments() {
                                     </label>
                                     <div className="relative">
                                         <input
-                                            id="event-start-date"
-                                            type="date"
                                             value={editingDepartment?.date}
                                             disabled
                                             readOnly
@@ -267,7 +272,8 @@ export default function Departments() {
                                 </div>
                                 <div className="mt-6">
                                     <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                                        Çalışanlar ({editingDepartment.employees.length})
+                                        Çalışanlar (
+                                        {editingDepartment.employees.length})
                                     </label>
                                     <div className="relative grid grid-cols-3 gap-4">
                                         {editingDepartment.employees.map(
@@ -275,35 +281,39 @@ export default function Departments() {
                                                 return (
                                                     <div
                                                         key={employee._id.toString()}
-                                                        onClick={() =>
-                                                            setEditingDepartment(
-                                                                (prevState) => {
-                                                                    if (
-                                                                        !prevState
-                                                                    ) {
-                                                                        return null;
-                                                                    }
-                                                                    const newState =
-                                                                        cloneDeep(
-                                                                            prevState
-                                                                        );
-
-                                                                    return {
-                                                                        ...newState,
-                                                                        employees:
-                                                                            newState.employees.filter(
-                                                                                (
-                                                                                    activeEmployee
-                                                                                ) =>
-                                                                                    activeEmployee.email !==
-                                                                                    employee.email
-                                                                            ),
-                                                                    };
-                                                                }
-                                                            )
-                                                        }
                                                     >
-                                                        <p className="hover:text-red-500 duration-150 cursor-pointer">
+                                                        <p
+                                                            onClick={() =>
+                                                                setEditingDepartment(
+                                                                    (
+                                                                        prevState
+                                                                    ) => {
+                                                                        if (
+                                                                            !prevState
+                                                                        ) {
+                                                                            return null;
+                                                                        }
+                                                                        const newState =
+                                                                            cloneDeep(
+                                                                                prevState
+                                                                            );
+
+                                                                        return {
+                                                                            ...newState,
+                                                                            employees:
+                                                                                newState.employees.filter(
+                                                                                    (
+                                                                                        activeEmployee
+                                                                                    ) =>
+                                                                                        activeEmployee.email !==
+                                                                                        employee.email
+                                                                                ),
+                                                                        };
+                                                                    }
+                                                                )
+                                                            }
+                                                            className="hover:text-red-500 duration-150 cursor-pointer"
+                                                        >
                                                             {employee.email}
                                                         </p>
                                                     </div>

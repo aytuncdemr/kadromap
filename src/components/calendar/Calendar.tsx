@@ -169,8 +169,6 @@ const Calendar: React.FC = () => {
                             </label>
                             <div className="relative">
                                 <input
-                                    id="event-start-date"
-                                    type="date"
                                     value={newEvent.date}
                                     required
                                     onChange={(e) =>

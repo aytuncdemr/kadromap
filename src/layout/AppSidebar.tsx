@@ -350,7 +350,7 @@ const AppSidebar: React.FC = () => {
                                   },
                                   {
                                       name: "Yeni Departman Ekle",
-                                      path: "/departman-ekle",
+                                      path: "/departmanlar/departman-ekle",
                                   },
                               ],
                           }

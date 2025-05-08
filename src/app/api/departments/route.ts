@@ -41,6 +41,12 @@ export async function POST(request: Request) {
 
         const { departments } = await mongodb();
 
+        body.chief._id = new ObjectId(body.chief._id as ObjectId);
+
+        for(let employee of body.employees){
+            employee._id = new ObjectId(employee._id);
+        }
+
         departments.insertOne(body);
 
         return new Response(
@@ -75,7 +81,7 @@ export async function PUT(request: Request) {
         const { _id, ...body } = (await request.json()) as Department;
 
         delete body.chief.email;
-        body.chief._id = new ObjectId(body.chief._id);
+        body.chief._id = new ObjectId(body.chief._id as ObjectId);
 
         for (let employee of body.employees) {
             delete employee.email;
