@@ -13,7 +13,7 @@ export async function GET(request: Request) {
 
         const emails = ((await users.find({}).toArray()) as User[])
             .filter((userDocument: User) => userDocument.email !== user.email)
-            .map((user) => user.email);
+            .map((user) => ({ email: user.email, _id: user._id }));
 
         return new Response(JSON.stringify(emails), { status: 200 });
     } catch (error) {

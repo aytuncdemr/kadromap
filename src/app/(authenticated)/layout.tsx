@@ -31,7 +31,6 @@ export default function AdminLayout({
             path !== "/giris-yap" &&
             path !== "/kayit-ol"
         ) {
-            console.log(authContext?.token, path);
             router.push("/giris-yap");
         }
     }, [authContext?.token]);

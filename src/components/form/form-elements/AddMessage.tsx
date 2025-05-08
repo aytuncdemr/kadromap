@@ -11,6 +11,7 @@ import { AuthContext } from "@/context/AuthContext";
 import { User } from "../../../../interfaces/User";
 import getTodayDate from "../../../../lib/getTodayDate";
 import Button from "@/components/ui/button/Button";
+import { ObjectId } from "mongodb";
 
 export default function AddMessage() {
     const handleSelectChange = (value: string) => {
@@ -58,10 +59,11 @@ export default function AddMessage() {
                         Authorization: `Bearer ${authContext?.token}`,
                     },
                 });
+
                 setUserEmails(
-                    data.map((email: string) => ({
-                        label: email,
-                        value: email,
+                    data.map((user: { email: string; _id: ObjectId }) => ({
+                        label: user.email,
+                        value: user.email,
                     }))
                 );
             } catch (error) {
@@ -118,7 +120,6 @@ export default function AddMessage() {
                 occupation: "",
                 isRead: false,
             });
-            
         } catch (error) {
             if (isAxiosError(error)) {
                 toast.error(error.response?.data.message || error.message);
@@ -157,7 +158,6 @@ export default function AddMessage() {
                             placeholder="Bir kişi seçiniz"
                             onChange={handleSelectChange}
                             className="dark:bg-dark-900"
-                            
                         />
                         <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
                             <ChevronDownIcon />

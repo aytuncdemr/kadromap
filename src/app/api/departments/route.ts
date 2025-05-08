@@ -1,5 +1,7 @@
+import { ObjectId } from "bson";
 import { Department } from "../../../../interfaces/Department";
 import checkIsAdmin from "../../../../lib/checkIsAdmin";
+import getDepartments from "../../../../lib/getDepartments";
 import getUserIdFromToken from "../../../../lib/getUserIdFromToken";
 import { mongodb } from "../../../../lib/mongodb";
 
@@ -11,13 +13,8 @@ export async function GET(request: Request) {
             throw new Error("Bu api route için yetkiniz bulunmamaktadır.");
         }
 
-        const { departments } = await mongodb();
-
-        const departmentDocuments = (await departments
-            .find({})
-            .toArray()) as unknown as Department[];
-
-        return new Response(JSON.stringify(departmentDocuments), {
+        const departments = await getDepartments();
+        return new Response(JSON.stringify(departments), {
             status: 200,
         });
     } catch (error) {
@@ -48,6 +45,50 @@ export async function POST(request: Request) {
 
         return new Response(
             JSON.stringify({ message: "Departman başarıyla eklenmiştir." }),
+            {
+                status: 200,
+            }
+        );
+    } catch (error) {
+        if (error instanceof Error) {
+            return new Response(JSON.stringify({ message: error.message }), {
+                status: 404,
+            });
+        } else {
+            return new Response(
+                JSON.stringify({ message: "Bir şeyler ters gitti" }),
+                { status: 500 }
+            );
+        }
+    }
+}
+
+export async function PUT(request: Request) {
+    try {
+        const userId = await getUserIdFromToken(request);
+        if (!checkIsAdmin(userId)) {
+            throw new Error("Bu api route için yetkiniz bulunmamaktadır.");
+        }
+
+        const { departments } = await mongodb();
+
+        const { _id, ...body } = (await request.json()) as Department;
+
+        delete body.chief.email;
+        body.chief._id = new ObjectId(body.chief._id);
+
+        for (let employee of body.employees) {
+            delete employee.email;
+            employee._id = new ObjectId(employee._id);
+        }
+
+        departments.findOneAndUpdate(
+            { _id: new ObjectId(_id) },
+            { $set: body }
+        );
+
+        return new Response(
+            JSON.stringify({ message: "Departman başarıyla güncellendi" }),
             {
                 status: 200,
             }

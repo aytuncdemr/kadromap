@@ -7,9 +7,6 @@ import NotesTable from "@/components/tables/NotesTable";
 import { Metadata } from "next";
 
 export default function NotesPage() {
-
-   
-
     return (
         <div>
             <PageBreadcrumb pageTitle="Notlar" />
