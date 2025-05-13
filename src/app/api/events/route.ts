@@ -5,7 +5,7 @@ import { mongodb } from "../../../../lib/mongodb";
 
 export async function GET(request: Request) {
     try {
-        const userId = await getUserIdFromToken(request);
+        await getUserIdFromToken(request);
 
         const { events } = await mongodb();
 

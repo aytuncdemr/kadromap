@@ -44,7 +44,7 @@ export async function POST(request: Request) {
         body.chief._id = new ObjectId(body.chief._id as ObjectId);
         delete body.chief.email;
 
-        for (let employee of body.employees) {
+        for (const employee of body.employees) {
             employee._id = new ObjectId(employee._id);
             delete employee.email;
         }
@@ -85,7 +85,7 @@ export async function PUT(request: Request) {
         body.chief._id = new ObjectId(body.chief._id as ObjectId);
         delete body.chief.email;
 
-        for (let employee of body.employees) {
+        for (const employee of body.employees) {
             employee._id = new ObjectId(employee._id);
             delete employee.email;
         }

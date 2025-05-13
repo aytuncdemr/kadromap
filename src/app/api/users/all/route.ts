@@ -18,10 +18,11 @@ export async function GET(request: Request) {
 
         const userDocumentsExcludedPasswords = userDocuments.map(
             (userDocument) => {
-                const { password, ...userDocumentWithoutPassword } =
-                    userDocument;
+                if ("password" in userDocument) {
+                    delete userDocument.password;
+                }
 
-                return userDocumentWithoutPassword;
+                return userDocument;
             }
         );
 

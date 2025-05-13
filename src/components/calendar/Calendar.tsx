@@ -10,7 +10,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { EventClickArg, EventContentArg } from "@fullcalendar/core";
+import { EventContentArg } from "@fullcalendar/core";
 import { useModal } from "@/hooks/useModal";
 import { Modal } from "@/components/ui/modal";
 import trLocale from "@fullcalendar/core/locales/tr";
@@ -89,6 +89,14 @@ const Calendar: React.FC = () => {
             });
             toast.success(data.message);
         } catch (error) {
+            if (isAxiosError(error)) {
+                toast.error(error.response?.data.message || error.message);
+            } else if (error instanceof Error) {
+                toast.error(error.message);
+            } else {
+                toast.error("Bir şeyler ters gitti");
+                console.log(error);
+            }
         } finally {
             setNewEvent({ title: "", content: "", date: "" });
             closeModal();

@@ -16,7 +16,6 @@ import axios, { isAxiosError } from "axios";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-    faBuildingUser,
     faCalendar,
     faDoorOpen,
     faEnvelope,

@@ -1,4 +1,3 @@
-import { Message } from "../../../../interfaces/Message";
 import { Note } from "../../../../interfaces/Note";
 import getUserFromId from "../../../../lib/getUserFromId";
 import getUserIdFromToken from "../../../../lib/getUserIdFromToken";
