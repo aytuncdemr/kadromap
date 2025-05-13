@@ -72,12 +72,15 @@ export async function POST(request: Request) {
 
 export async function PUT(request: Request) {
     try {
-        const userId = await getUserIdFromToken(request);
+        await getUserIdFromToken(request);
         const { _id, ...body } = (await request.json()) as User;
 
         const { users } = await mongodb();
 
-        await users.findOneAndUpdate({ _id: userId }, { $set: body });
+        await users.findOneAndUpdate(
+            { _id: new ObjectId(_id) },
+            { $set: body }
+        );
 
         return new Response(
             JSON.stringify({ message: "Değişiklikler başarıyla kaydedildi" }),

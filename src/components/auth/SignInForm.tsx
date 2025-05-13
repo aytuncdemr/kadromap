@@ -1,5 +1,6 @@
 "use client";
 import Checkbox from "@/components/form/input/Checkbox";
+
 import Input from "@/components/form/input/InputField";
 import Label from "@/components/form/Label";
 import Button from "@/components/ui/button/Button";
@@ -38,7 +39,7 @@ export default function SignInForm() {
                 localStorage.removeItem("password");
             }
             authContext?.setToken(token);
-            router.push("/");
+            router.push("/hesabim");
         } catch (error) {
             if (isAxiosError(error)) {
                 toast.error(error.response?.data.message || error.message);

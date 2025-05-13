@@ -11,33 +11,31 @@ import { usePathname, useRouter } from "next/navigation";
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { toast } from "react-toastify";
 
-const AppHeader: React.FC = () => {
+export default function AppHeader() {
     const authContext = useContext(AuthContext);
+    const path = usePathname();
+    const router = useRouter();
+    const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
+    const inputRef = useRef<HTMLInputElement>(null);
 
+    const [query, setQuery] = useState<string>("");
     const [keywords, setKeywords] = useState<
         ({ label: string; path?: string; onClick?: () => void } | null)[]
     >([]);
-
     const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
-    const path = usePathname();
-    const router = useRouter();
+    const [isFocused, setIsFocused] = useState(false);
 
-    const { isMobileOpen, toggleSidebar, toggleMobileSidebar } = useSidebar();
-
-    const handleToggle = () => {
+    function handleToggle() {
         if (window.innerWidth >= 1024) {
             toggleSidebar();
         } else {
             toggleMobileSidebar();
         }
-    };
-    const [isFocused, setIsFocused] = useState(false);
-
-    const toggleApplicationMenu = () => {
+    }
+    function toggleApplicationMenu() {
         setApplicationMenuOpen(!isApplicationMenuOpen);
-    };
-    const inputRef = useRef<HTMLInputElement>(null);
-    const [query, setQuery] = useState<string>("");
+    }
+
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if ((event.metaKey || event.ctrlKey) && event.key === "k") {
@@ -196,7 +194,7 @@ const AppHeader: React.FC = () => {
                         {/* Cross Icon */}
                     </button>
 
-                    <Link href="/" className="lg:hidden">
+                    <Link href="/hesabim" className="lg:hidden">
                         <Image
                             width={154}
                             height={32}
@@ -273,7 +271,7 @@ const AppHeader: React.FC = () => {
                                     <span> Ctrl | ⌘ </span>
                                     <span> K </span>
                                 </button>
-                                <div className="flex flex-col gap-3 absolute w-full mt-2">
+                                <div className="flex flex-col  bg-white absolute w-full mt-2">
                                     {isFocused &&
                                         keywords.map((keyword) => {
                                             if (!keyword) {
@@ -305,7 +303,7 @@ const AppHeader: React.FC = () => {
                                                                     path
                                                             );
                                                         }}
-                                                        className="cursor-pointer dark:text-white dark:bg-gray-800 dark:hover:bg-gray-700 p-2 border dark:border-gray-600 border-gray-100 bg-white rounded-lg hover:bg-blue-50 duration-150"
+                                                        className="cursor-pointer dark:text-white dark:bg-gray-800 dark:hover:bg-gray-700 px-2 py-3  dark:border-gray-600 border-gray-100 bg-white  hover:bg-blue-50 duration-150"
                                                     >
                                                         {keyword.label}
                                                     </div>
@@ -338,6 +336,4 @@ const AppHeader: React.FC = () => {
             </div>
         </header>
     );
-};
-
-export default AppHeader;
+}

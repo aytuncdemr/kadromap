@@ -443,7 +443,7 @@ const AppSidebar: React.FC = () => {
                         : "justify-start"
                 }`}
             >
-                <Link href="/">
+                <Link href="/hesabim">
                     {isExpanded || isHovered || isMobileOpen ? (
                         <>
                             <Image
