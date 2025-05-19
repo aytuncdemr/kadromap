@@ -1,5 +1,4 @@
 import { Note } from "../../../../interfaces/Note";
-import getUserFromId from "../../../../lib/getUserFromId";
 import getUserIdFromToken from "../../../../lib/getUserIdFromToken";
 import { mongodb } from "../../../../lib/mongodb";
 
