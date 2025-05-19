@@ -17,7 +17,7 @@ export default function AddDepartment() {
     const [newDepartment, setNewDepartment] = useState<Department>({
         name: "",
         chief: {
-            //@ts-ignore
+            //@ts-expect-error
             _id: null,
         },
         employees: [],
@@ -59,7 +59,7 @@ export default function AddDepartment() {
             setNewDepartment({
                 name: "",
                 chief: {
-                    //@ts-ignore
+                    //@ts-expect-error
                     _id: null,
                 },
                 employees: [],
