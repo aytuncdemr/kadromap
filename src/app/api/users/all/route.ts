@@ -13,20 +13,10 @@ export async function GET(request: Request) {
 
         const { users } = await mongodb();
         const userDocuments = (await users
-            .find({})
+            .find({}, { projection: { password: 0 } })
             .toArray()) as unknown as User[];
 
-        const userDocumentsExcludedPasswords = userDocuments.map(
-            (userDocument) => {
-                if ("password" in userDocument) {
-                    delete userDocument.password;
-                }
-
-                return userDocument;
-            }
-        );
-
-        return new Response(JSON.stringify(userDocumentsExcludedPasswords), {
+        return new Response(JSON.stringify(userDocuments), {
             status: 200,
         });
     } catch (error) {

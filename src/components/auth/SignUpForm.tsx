@@ -36,7 +36,7 @@ export default function SignUpForm() {
             const { data } = await axios.post("/api/users", user);
             if (rememberMe) {
                 localStorage.setItem("email", user.email);
-                localStorage.setItem("password", user.password || "");
+                localStorage.setItem("password", user.password as string);
             } else {
                 localStorage.removeItem("email");
                 localStorage.removeItem("password");
@@ -198,7 +198,7 @@ export default function SignUpForm() {
                                     </Label>
                                     <div className="relative">
                                         <Input
-                                            value={user.password || ""}
+                                            value={user.password}
                                             id="name"
                                             onChange={(e) =>
                                                 setUser({

@@ -6,7 +6,7 @@ export async function GET(request: Request) {
         const userId = await getUserIdFromToken(request);
         const isAdmin = await checkIsAdmin(userId);
 
-        return new Response(isAdmin ? "Admin" : "user", { status: 200 });
+        return new Response(isAdmin ? "Admin" : "User", { status: 200 });
     } catch (error) {
         if (error instanceof Error) {
             return new Response(JSON.stringify({ message: error.message }), {

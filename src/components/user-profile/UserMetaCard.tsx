@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useContext, useState } from "react";
 import { useModal } from "../../hooks/useModal";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
@@ -9,18 +9,41 @@ import { User } from "../../../interfaces/User";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleUser } from "@fortawesome/free-solid-svg-icons";
 import { EyeCloseIcon, EyeIcon } from "@/icons";
+import { AuthContext } from "@/context/AuthContext";
+import axios, { isAxiosError } from "axios";
+import { toast } from "react-toastify";
 
 export default function UserMetaCard({ user }: { user: User }) {
-    const {
-        isOpen,
-        openModal,
-        closeModal,
-        userEdit,
-        showPassword,
-        setUserEdit,
-        setShowPassword,
-        handleSave,
-    } = useModal(false, user);
+    const authContext = useContext(AuthContext);
+    const [userEdit, setUserEdit] = useState<User>(user as User);
+    const [showPassword, setShowPassword] = useState(false);
+
+    const { isOpen, openModal, closeModal } = useModal(false);
+    const handleSave = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        try {
+            const { data } = await axios.put("/api/users", userEdit, {
+                headers: {
+                    Authorization: `Bearer ${authContext?.token}`,
+                },
+            });
+
+            toast.success(data.message);
+        } catch (error) {
+            if (isAxiosError(error)) {
+                toast.error(error.response?.data.message || error.message);
+            } else if (error instanceof Error) {
+                toast.error(error.message);
+            } else {
+                console.log(error);
+                toast.error("Bir şeyler ters gitti");
+            }
+        } finally {
+            closeModal();
+            setShowPassword(false);
+        }
+    };
 
     return (
         <>

@@ -38,7 +38,7 @@ export default function UserInfo() {
             }
         }
 
-        if(!user){
+        if (!user) {
             getUserData();
         }
 

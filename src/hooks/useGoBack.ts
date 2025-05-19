@@ -7,7 +7,7 @@ const useGoBack = () => {
         if (window.history.length > 1) {
             router.back(); // Navigate to the previous route
         } else {
-            router.push("/hesabim"); // Redirect to home if no history exists
+            router.push("/giris-yap"); // Redirect to home if no history exists
         }
     };
 

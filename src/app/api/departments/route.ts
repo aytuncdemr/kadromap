@@ -39,15 +39,17 @@ export async function POST(request: Request) {
             throw new Error("Bu api route için yetkiniz bulunmamaktadır.");
         }
 
-        const { departments } = await mongodb();
+        const { departments, users } = await mongodb();
 
         body.chief._id = new ObjectId(body.chief._id as ObjectId);
-        delete body.chief.email;
 
-        for (const employee of body.employees) {
-            employee._id = new ObjectId(employee._id);
-            delete employee.email;
+        if (body?.chief?.email) {
+            delete body.chief.email;
         }
+        users.findOneAndUpdate(
+            { _id: body.chief._id },
+            { $set: { departmentName: body.name, occupation: "Yönetici" } }
+        );
 
         departments.insertOne(body);
 
@@ -78,19 +80,36 @@ export async function PUT(request: Request) {
             throw new Error("Bu api route için yetkiniz bulunmamaktadır.");
         }
 
-        const { departments } = await mongodb();
+        const { departments, users } = await mongodb();
 
-        const { _id, ...body } = (await request.json()) as Department;
+        const { _id, ...body } = (await request.json()) as Department & {
+            removedChiefID: string | null;
+        };
 
         body.chief._id = new ObjectId(body.chief._id as ObjectId);
-        delete body.chief.email;
+
+        if (body?.chief?.email) {
+            delete body.chief.email;
+        }
+        await users.findOneAndUpdate(
+            { _id: body.chief._id },
+            { $set: { departmentName: body.name, occupation: "Yönetici" } }
+        );
+
+        if (body.removedChiefID) {
+            console.log(body.removedChiefID);
+            await users.findOneAndUpdate(
+                { _id: new ObjectId(body.removedChiefID) },
+                { $set: { departmentName: "Atama Yapılmamış", occupation: "Atama Yapılmamış" } }
+            );
+        }
 
         for (const employee of body.employees) {
             employee._id = new ObjectId(employee._id);
-            delete employee.email;
+            if (employee?.email) delete employee.email;
         }
 
-        departments.findOneAndUpdate(
+        await departments.findOneAndUpdate(
             { _id: new ObjectId(_id) },
             { $set: body }
         );

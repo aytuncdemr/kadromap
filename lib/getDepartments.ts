@@ -14,16 +14,19 @@ export default async function getDepartments() {
             const chief = (await users.findOne({
                 _id: new ObjectId(departmentDocument.chief._id || 0),
             })) as unknown as User;
-          
-            departmentDocument.chief.email = chief.email;
 
+            if (chief) {
+                departmentDocument.chief.email = chief.email;
+            }
             await Promise.all(
                 departmentDocument.employees.map(async (employee) => {
                     const employeeDocument = (await users.findOne({
                         _id: employee._id,
                     })) as unknown as User;
-                 
-                    employee.email = employeeDocument.email;
+
+                    if (employeeDocument && employeeDocument.email) {
+                        employee.email = employeeDocument.email;
+                    }
                 })
             );
             return departmentDocument;

@@ -30,12 +30,9 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
     try {
-        const userId = await getUserIdFromToken(request);
-        const user = await getUserFromId(userId);
-        const body = {
-            ...((await request.json()) as Note),
-            from: user.email,
-        };
+        await getUserIdFromToken(request);
+        const body = (await request.json()) as Note;
+
         const { notes } = await mongodb();
 
         notes.insertOne(body);

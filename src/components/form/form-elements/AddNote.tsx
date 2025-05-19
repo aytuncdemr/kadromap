@@ -128,7 +128,7 @@ export default function AddNote() {
                         ></textarea>
                     </div>
                 </div>
-                <Button type="submit">Gönder</Button>
+                <Button type="submit">Ekle</Button>
             </form>
         </ComponentCard>
     );

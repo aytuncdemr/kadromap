@@ -5,8 +5,6 @@ import UserDropdown from "@/components/header/UserDropdown";
 import { AuthContext } from "@/context/AuthContext";
 import { useSidebar } from "@/context/SidebarContext";
 import axios, { isAxiosError } from "axios";
-import Image from "next/image";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { toast } from "react-toastify";
@@ -75,7 +73,7 @@ export default function AppHeader() {
                         label: "Yeni bir hesap oluştur",
                         path: "/kayit-ol",
                         onClick: () => {
-                            authContext?.setToken(null);
+                            router.push("/kayit-ol");
                         },
                     },
                     {
@@ -193,23 +191,6 @@ export default function AppHeader() {
                         )}
                         {/* Cross Icon */}
                     </button>
-
-                    <Link href="/hesabim" className="lg:hidden">
-                        <Image
-                            width={154}
-                            height={32}
-                            className="dark:hidden"
-                            src="./images/logo/logo.svg"
-                            alt="Logo"
-                        />
-                        <Image
-                            width={154}
-                            height={32}
-                            className="hidden dark:block"
-                            src="./images/logo/logo-dark.svg"
-                            alt="Logo"
-                        />
-                    </Link>
 
                     <button
                         onClick={toggleApplicationMenu}

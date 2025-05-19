@@ -14,7 +14,7 @@ export async function GET(request: Request) {
         const user = await getUserFromId(userId);
 
         if (withPassword !== "true" && "password" in user) {
-            delete user.password;
+            if (user.password) delete user.password;
 
             return new Response(JSON.stringify(user), {
                 status: 200,

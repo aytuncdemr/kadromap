@@ -50,7 +50,7 @@ export async function GET(request: Request) {
                 (a, b) =>
                     new Date(b.date).getTime() - new Date(a.date).getTime()
             )
-            .slice(0, 30);
+            .slice(0, 50);
 
         return new Response(JSON.stringify(notifications), {
             status: 200,

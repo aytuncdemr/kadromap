@@ -1,5 +1,5 @@
+import { Event } from "../../../../interfaces/Event";
 import checkIsAdmin from "../../../../lib/checkIsAdmin";
-import getUserFromId from "../../../../lib/getUserFromId";
 import getUserIdFromToken from "../../../../lib/getUserIdFromToken";
 import { mongodb } from "../../../../lib/mongodb";
 
@@ -31,12 +31,7 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
     try {
         const userId = await getUserIdFromToken(request);
-        const user = await getUserFromId(userId);
-        const body = {
-            ...((await request.json()) as Event),
-            from: user.email,
-        };
-
+        const body = await request.json() as Event;
         if (!(await checkIsAdmin(userId))) {
             throw new Error("Bu api route için yetkiniz bulunmamaktadır.");
         }

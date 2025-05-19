@@ -21,6 +21,7 @@ import axios, { isAxiosError } from "axios";
 import { AuthContext } from "@/context/AuthContext";
 import stringToRGB from "../../../lib/stringToRGB";
 import { User } from "../../../interfaces/User";
+import convertToISO from "../../../lib/convertToISO";
 
 const Calendar: React.FC = () => {
     const [events, setEvents] = useState<Event[]>([]);
@@ -121,7 +122,10 @@ const Calendar: React.FC = () => {
                         center: "title",
                         right: "dayGridMonth,timeGridWeek",
                     }}
-                    events={events}
+                    events={events.map((event) => ({
+                        ...event,
+                        start: convertToISO(event.date),
+                    }))}
                     eventContent={renderEventContent}
                     customButtons={{
                         addEventButton: {
@@ -241,10 +245,12 @@ const renderEventContent = (eventInfo: EventContentArg) => {
                         0.45
                     ),
                 }}
-                className={`event-fc-color text-center flex fc-event-main  p-1 rounded-sm `}
+                title={eventInfo.event.title}
+                onClick={() => toast.info(eventInfo.event.extendedProps.content)}
+                className={`event-fc-color cursor-pointer w-full   text-center flex fc-event-main   p-1 rounded-sm`}
             >
-                <div className="fc-event-title dark:!text-white ">
-                    <p>{eventInfo.event.title}</p>
+                <div  className="fc-event-title dark:!text-white ">
+                    {eventInfo.event.title}
                 </div>
             </div>
         </>

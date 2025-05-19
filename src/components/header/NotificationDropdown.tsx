@@ -18,7 +18,7 @@ export default function NotificationDropdown() {
     const authContext = useContext(AuthContext);
     const router = useRouter();
     const [isOpen, setIsOpen] = useState(false);
-    const [notifying, setNotifying] = useState(true);
+    const [notifying, setNotifying] = useState(false);
     const [notifications, setNotifications] = useState<Notification[] | null>(
         null
     );
@@ -43,6 +43,7 @@ export default function NotificationDropdown() {
                         Authorization: `Bearer ${authContext?.token}`,
                     },
                 });
+             
                 setNotifications(data);
             } catch (error) {
                 if (isAxiosError(error)) {
@@ -57,6 +58,7 @@ export default function NotificationDropdown() {
         }
         if (!notifications) {
             fetchNotifications();
+            setNotifying(true);
         }
         const fetchNotificationsID = setInterval(fetchNotifications, 4000);
 

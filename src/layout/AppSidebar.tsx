@@ -30,7 +30,7 @@ type NavItem = {
     name: string;
     icon: React.ReactNode;
     path?: string;
-    subItems?: { name: string; path: string; pro?: boolean; new?: boolean }[];
+    subItems?: { name: string; path: string }[];
     onClick?: () => void;
 };
 
@@ -159,34 +159,7 @@ const AppSidebar: React.FC = () => {
                                                     }`}
                                                 >
                                                     {subItem.name}
-                                                    <span className="flex items-center gap-1 ml-auto">
-                                                        {subItem.new && (
-                                                            <span
-                                                                className={`ml-auto ${
-                                                                    isActive(
-                                                                        subItem.path
-                                                                    )
-                                                                        ? "menu-dropdown-badge-active"
-                                                                        : "menu-dropdown-badge-inactive"
-                                                                } menu-dropdown-badge `}
-                                                            >
-                                                                new
-                                                            </span>
-                                                        )}
-                                                        {subItem.pro && (
-                                                            <span
-                                                                className={`ml-auto ${
-                                                                    isActive(
-                                                                        subItem.path
-                                                                    )
-                                                                        ? "menu-dropdown-badge-active"
-                                                                        : "menu-dropdown-badge-inactive"
-                                                                } menu-dropdown-badge `}
-                                                            >
-                                                                pro
-                                                            </span>
-                                                        )}
-                                                    </span>
+                                                    <span className="flex items-center gap-1 ml-auto"></span>
                                                 </Link>
                                             </li>
                                         ))}
@@ -415,7 +388,7 @@ const AppSidebar: React.FC = () => {
             getUserData();
         }
 
-        const intervalId = setInterval(() => getUserData(), 5000);
+        const intervalId = setInterval(getUserData, 4000);
 
         return () => clearInterval(intervalId);
     }, []);
@@ -521,13 +494,13 @@ const AppSidebar: React.FC = () => {
                     <div
                         onClick={() =>
                             window.open(
-                                "https://www.linkedin.com/in/aytun%C3%A7-demir-70339723a/",
+                                "https://github.com/aytuncdemr/kadromap",
                                 "_blank"
                             )
                         }
                         className="flex flex-col gap-2 border hover:bg-gray-800 dark:text-white hover:text-white duration-150 cursor-pointer rounded-lg p-2 text-center"
                     >
-                        <p>Aytunç Demir/Kadromap</p>
+                        <p>Github/Kadromap</p>
                         <p>@2025</p>
                     </div>
                 </div>

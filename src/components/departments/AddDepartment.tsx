@@ -11,12 +11,13 @@ import { ObjectId } from "bson";
 import axios, { isAxiosError } from "axios";
 import { toast } from "react-toastify";
 import { AuthContext } from "@/context/AuthContext";
-import Select from "../form/Select";
+import Select, { SingleValue } from "react-select";
 
 export default function AddDepartment() {
     const [newDepartment, setNewDepartment] = useState<Department>({
         name: "",
         chief: {
+            //@ts-ignore
             _id: null,
         },
         employees: [],
@@ -28,35 +29,38 @@ export default function AddDepartment() {
     >(null);
     const authContext = useContext(AuthContext);
 
-
-    async function submitHandler(e:FormEvent){
+    async function submitHandler(e: FormEvent) {
         e.preventDefault();
-        try{
-            if(!newDepartment.chief._id){
-                throw new Error("Yönetici kısmı boş bırakılamaz");
+        try {
+            if (!newDepartment.chief._id) {
+                throw new Error("Lütfen bir yönetici seçiniz");
             }
-            const {data} = await axios.post("/api/departments",newDepartment,{
-                headers:{
-                    "Authorization": `Bearer ${authContext?.token}`
+            const { data } = await axios.post(
+                "/api/departments",
+                newDepartment,
+                {
+                    headers: {
+                        Authorization: `Bearer ${authContext?.token}`,
+                    },
                 }
-            });
+            );
 
             toast.success(data.message);
-
-        }catch(error){
-            if(isAxiosError(error)){
+        } catch (error) {
+            if (isAxiosError(error)) {
                 toast.error(error.response?.data.message || error.message);
-            }else if(error instanceof Error){
+            } else if (error instanceof Error) {
                 toast.error(error.message);
-            }else{
+            } else {
                 console.log(error);
                 toast.error("Bir şeyler ters gitti");
             }
-        }finally{
+        } finally {
             setNewDepartment({
                 name: "",
                 chief: {
-                    _id: new ObjectId(0),
+                    //@ts-ignore
+                    _id: null,
                 },
                 employees: [],
                 date: getTodayDate(),
@@ -103,7 +107,6 @@ export default function AddDepartment() {
         return null;
     }
 
-
     return (
         <ComponentCard title="Yeni Departman Ekle">
             <form onSubmit={submitHandler} className="space-y-6">
@@ -126,12 +129,27 @@ export default function AddDepartment() {
                     <div>
                         <Label>Yönetici</Label>
                         <Select
-                            options={userEmails || []}
-                            onChange={(e) => {
+                            value={{
+                                label:
+                                    userEmails.find(
+                                        (user) =>
+                                            user.value ===
+                                            newDepartment.chief._id?.toString()
+                                    )?.label || "",
+                                value:
+                                    newDepartment.chief._id?.toString() || "",
+                            }}
+                            options={userEmails}
+                            onChange={(
+                                option: SingleValue<{
+                                    label: string | undefined;
+                                    value: string;
+                                }>
+                            ) => {
                                 setNewDepartment((prevState) => ({
                                     ...prevState,
                                     chief: {
-                                        _id: new ObjectId(e),
+                                        _id: new ObjectId(option?.value),
                                     },
                                 }));
                             }}
@@ -148,62 +166,7 @@ export default function AddDepartment() {
                         />
                     </div>
                 </div>
-                <div>
-                    <Label>
-                        <div className="flex gap-4 items-center">
-                            Çalışanlar
-                            <Select
-                                onChange={(e) =>
-                                    setNewDepartment((prevDepartment) => ({
-                                        ...prevDepartment,
-                                        employees: [
-                                            ...prevDepartment.employees,
-                                            {
-                                                email: userEmails.find(
-                                                    (user) => user.value === e
-                                                )?.label,
-                                                _id: new ObjectId(e),
-                                            },
-                                        ],
-                                    }))
-                                }
-                                placeholder="Ekle..."
-                                className="border border-gray-100 rounded-lg text-base max-w-[150px]"
-                                options={userEmails.filter((user) =>
-                                    newDepartment.employees.find(
-                                        (employee) =>
-                                            employee.email === user.label
-                                    )
-                                        ? false
-                                        : true
-                                )}
-                            ></Select>
-                        </div>
-                    </Label>
-                    <div
-                        className={`min-h-[350px] w-full relative rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 outline-none bg-transparent text-gray-800 border-gray-300 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:focus:border-brand-800 flex gap-4`}
-                    >
-                        {newDepartment.employees.map((employee) => (
-                            <p
-                                key={employee._id.toString()}
-                                onClick={() =>
-                                    setNewDepartment((prevDepartment) => ({
-                                        ...prevDepartment,
-                                        employees:
-                                            prevDepartment.employees.filter(
-                                                (employeeWorking) =>
-                                                    employeeWorking.email !==
-                                                    employee.email
-                                            ),
-                                    }))
-                                }
-                                className="hover:text-red-500 cursor-pointer duration-150"
-                            >
-                                {employee.email}
-                            </p>
-                        ))}
-                    </div>
-                </div>
+               
                 <Button type="submit">Departmanı Ekle</Button>
             </form>
         </ComponentCard>

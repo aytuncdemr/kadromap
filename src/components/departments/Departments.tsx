@@ -16,10 +16,9 @@ import {
     Modal,
 } from "@mui/material";
 import Form from "../form/Form";
-import Select from "../form/Select";
-import { ChevronDownIcon } from "@/icons";
 import cloneDeep from "lodash/cloneDeep";
 import { ObjectId } from "bson";
+import Select, { SingleValue } from "react-select";
 
 export default function Departments() {
     const [departments, setDepartments] = useState<Department[] | null>(null);
@@ -31,13 +30,17 @@ export default function Departments() {
     const [userEmails, setUserEmails] = useState<
         { value: string; label: string }[] | null
     >(null);
+    const [initialChiefID, setInitialChiefID] = useState<string | null>(null);
 
     async function updateDepartmentHandler(e: FormEvent) {
         e.preventDefault();
         try {
             const { data } = await axios.put(
                 "/api/departments",
-                editingDepartment,
+                {
+                    ...editingDepartment,
+                    removedChiefID: initialChiefID,
+                },
                 {
                     headers: {
                         Authorization: `Bearer ${authContext?.token}`,
@@ -57,6 +60,7 @@ export default function Departments() {
             }
         } finally {
             setEditingDepartment(null);
+            setInitialChiefID(null);
             setIsOpen(false);
         }
     }
@@ -139,6 +143,29 @@ export default function Departments() {
         });
     }
 
+    async function deleteWorkerFromDepartment(_id: string) {
+        try {
+            await axios.put(
+                "/api/users/expelled",
+                {
+                    headers: {
+                        Authorization: `Bearer ${authContext?.token}`,
+                    },
+                },
+                { data: { _id } }
+            );
+        } catch (error) {
+            if (isAxiosError(error)) {
+                toast.error(error.response?.data.message || error.message);
+            } else if (error instanceof Error) {
+                toast.error(error.message);
+            } else {
+                toast.error("Bir şeyler ters gitti");
+                console.log(error);
+            }
+        }
+    }
+
     return (
         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
             <div className="max-w-full overflow-x-auto">
@@ -160,6 +187,9 @@ export default function Departments() {
                                         key={department._id?.toString()}
                                         onClick={() => {
                                             setIsOpen(true);
+                                            setInitialChiefID(
+                                                department.chief._id.toString()
+                                            );
                                             setEditingDepartment(department);
                                         }}
                                     >
@@ -182,6 +212,16 @@ export default function Departments() {
                                         </TableCell>
                                     </TableRow>
                                 ))}
+                                {departments?.length === 0 && (
+                                    <TableRow>
+                                        <TableCell
+                                            colSpan={4}
+                                            className="text-center text-gray-500"
+                                        >
+                                            Görüntelenecek bir departman yok
+                                        </TableCell>
+                                    </TableRow>
+                                )}
                             </TableBody>
                         </Table>
                     </TableContainer>
@@ -191,7 +231,11 @@ export default function Departments() {
             {editingDepartment && (
                 <Modal
                     open={isOpen}
-                    onClose={() => setIsOpen(false)}
+                    onClose={() => {
+                        setEditingDepartment(null);
+                        setInitialChiefID(null);
+                        setIsOpen(false);
+                    }}
                     className="max-w-[700px] mx-auto mt-[20vh] p-6 lg:p-10"
                 >
                     <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900  lg:p-11">
@@ -236,24 +280,39 @@ export default function Departments() {
                                 </div>
                                 <div className="mt-6">
                                     <label className="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                                        Yönetici /{" "}
-                                        {editingDepartment.chief.email}
+                                        Yönetici /
                                     </label>
                                     <div className="relative">
                                         <div className="relative">
                                             <Select
-                                                defaultValue=""
-                                                value=""
+                                                value={{
+                                                    value: editingDepartment.chief._id.toString(),
+                                                    label: editingDepartment
+                                                        .chief.email,
+                                                }}
                                                 options={userEmails || []}
-                                                placeholder="Bir kişi seçiniz"
-                                                onChange={
-                                                    handleChiefEmailChange
-                                                }
+                                                onChange={(
+                                                    option: SingleValue<{
+                                                        label:
+                                                            | string
+                                                            | undefined;
+                                                        value: string;
+                                                    }>
+                                                ) => {
+                                                    if (
+                                                        !option ||
+                                                        !option.value ||
+                                                        !option.label
+                                                    ) {
+                                                        return;
+                                                    }
+
+                                                    handleChiefEmailChange(
+                                                        option.value
+                                                    );
+                                                }}
                                                 className="dark:bg-dark-900"
                                             />
-                                            <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
-                                                <ChevronDownIcon />
-                                            </span>
                                         </div>
                                     </div>
                                 </div>
@@ -283,7 +342,10 @@ export default function Departments() {
                                                         key={employee._id.toString()}
                                                     >
                                                         <p
-                                                            onClick={() =>
+                                                            onClick={() => {
+                                                                deleteWorkerFromDepartment(
+                                                                    employee._id.toString()
+                                                                );
                                                                 setEditingDepartment(
                                                                     (
                                                                         prevState
@@ -310,8 +372,8 @@ export default function Departments() {
                                                                                 ),
                                                                         };
                                                                     }
-                                                                )
-                                                            }
+                                                                );
+                                                            }}
                                                             className="hover:text-red-500 duration-150 cursor-pointer"
                                                         >
                                                             {employee.email}

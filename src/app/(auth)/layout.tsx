@@ -1,5 +1,4 @@
 import GridShape from "@/components/common/GridShape";
-import ThemeTogglerTwo from "@/components/common/ThemeTogglerTwo";
 
 import { ThemeProvider } from "@/context/ThemeContext";
 import Image from "next/image";
@@ -31,15 +30,14 @@ export default function AuthLayout({
                                 </Link>
                                 <p className="text-center text-gray-400 dark:text-white/60">
                                     Kadromap ile daha organize, hızlı ve kolay
-                                    iletişim kurulabilen bir çalışma ortamı
-                                    edinin!
+                                    iletişim kurduğunuz bir çalışma ortamı
+                                    yaratın!
                                 </p>
                             </div>
                         </div>
                     </div>
-                    <div className="fixed bottom-6 right-6 z-50 hidden sm:block">
-                        <ThemeTogglerTwo />
-                    </div>
+                 
+                
                 </div>
             </ThemeProvider>
         </div>

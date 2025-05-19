@@ -9,7 +9,7 @@ export default async function getUserFromId(_id: ObjectId) {
         _id,
     })) as unknown as User;
     if (!user) {
-        console.log(_id, "sistemde bulunamadı");
+        console.log(_id, " sistemde bulunamadı");
         throw new Error("Kullanıcı sistemde bulunamadı");
     }
 

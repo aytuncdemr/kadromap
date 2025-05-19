@@ -21,8 +21,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import stringToRGB from "../../../lib/stringToRGB";
 import { Department } from "../../../interfaces/Department";
-import Select from "../form/Select";
 import Form from "../form/Form";
+import Select, { SingleValue } from "react-select";
 
 export default function Workers() {
     const [openedWorker, setOpenedWorker] = useState<User | null>(null);
@@ -59,7 +59,30 @@ export default function Workers() {
             closeModalHandler();
         }
     }
+    async function deleteWorkerHandler() {
+        if (!openedWorker) return;
 
+        try {
+            const { data } = await axios.delete(`/api/users`, {
+                headers: {
+                    Authorization: `Bearer ${authContext?.token}`,
+                },
+                data: openedWorker,
+            });
+            toast.success(data.message);
+        } catch (error) {
+            if (isAxiosError(error)) {
+                toast.error(error?.response?.data?.message || error.message);
+            } else if (error instanceof Error) {
+                toast.error(error.message);
+            } else {
+                console.error(error);
+                toast.error("Beklenmeyen bir hata oluştu");
+            }
+        } finally {
+            closeModalHandler();
+        }
+    }
     useEffect(() => {
         async function getWorkers() {
             try {
@@ -68,6 +91,14 @@ export default function Workers() {
                         Authorization: `Bearer ${authContext?.token}`,
                     },
                 });
+                console.log(
+                    data.map((worker: User) => ({
+                        name: worker.name,
+                        lastName: worker.lastName,
+                        departmenName: worker.departmentName,
+                        occupation: worker.occupation,
+                    }))
+                );
                 setWorkers(data);
             } catch (error) {
                 if (isAxiosError(error)) {
@@ -256,9 +287,9 @@ export default function Workers() {
                         <div className="px-2 pr-14">
                             <h4 className="mb-2 text-2xl font-semibold text-gray-800 dark:text-white/90">
                                 {openedWorker?.name} {openedWorker?.lastName}{" "}
-                                <h5 className="mb-5 text-lg xl:text-xl font-medium text-gray-800 dark:text-white/90 lg:mb-8 flex flex-row justify-between">
-                                    <p>{openedWorker?.email}</p>
-                                </h5>
+                                <p className="mb-5  text-lg xl:text-xl font-medium text-gray-800 dark:text-white/90 lg:mb-8 flex flex-row justify-between">
+                                    {openedWorker?.email}
+                                </p>
                             </h4>
                         </div>
                         <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
@@ -302,30 +333,43 @@ export default function Workers() {
                                             </span>{" "}
                                         </Label>
                                         <Select
-                                            onChange={(value) =>
+                                            className="py-1"
+                                            options={departments?.map(
+                                                (department) => ({
+                                                    value: department.name,
+                                                    label: department.name,
+                                                })
+                                            )}
+                                            value={
+                                                openedWorker?.departmentName
+                                                    ? {
+                                                          label: openedWorker.departmentName,
+                                                          value: openedWorker.departmentName,
+                                                      }
+                                                    : null
+                                            }
+                                            isClearable={false}
+                                            onChange={(
+                                                option: SingleValue<{
+                                                    value: string;
+                                                    label: string;
+                                                }>
+                                            ) => {
+                                                if (!option) return;
+
                                                 setOpenedWorker(
                                                     (prevWorker) => {
-                                                        if (!prevWorker) {
+                                                        if (!prevWorker)
                                                             return null;
-                                                        }
                                                         return {
                                                             ...prevWorker,
                                                             departmentName:
-                                                                value,
+                                                                option.value,
                                                         };
                                                     }
-                                                )
-                                            }
-                                            value={openedWorker?.departmentName}
-                                            options={
-                                                departments?.map(
-                                                    (department) => ({
-                                                        label: department.name,
-                                                        value: department.name,
-                                                    })
-                                                ) || []
-                                            }
-                                        ></Select>
+                                                );
+                                            }}
+                                        />
                                     </div>
                                     <div className="col-span-2 lg:col-span-1">
                                         <Label>
@@ -415,6 +459,14 @@ export default function Workers() {
                         <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
                             <Button size="sm" type="submit">
                                 Kaydet
+                            </Button>
+                            <Button
+                                size="sm"
+                                onClick={deleteWorkerHandler}
+                                type="button"
+                                className="bg-red-500 hover:bg-red-600 text-white"
+                            >
+                                Çalışanı Sil
                             </Button>
                             <Button
                                 size="sm"

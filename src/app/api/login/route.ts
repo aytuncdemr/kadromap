@@ -6,10 +6,6 @@ export async function POST(request: Request) {
     try {
         const body = (await request.json()) as LoginData;
 
-        if (!body.email || !body.password) {
-            throw new Error("E-mail veya şifre boş olamaz.");
-        }
-
         const { users } = await mongodb();
 
         const user = await users.findOne({

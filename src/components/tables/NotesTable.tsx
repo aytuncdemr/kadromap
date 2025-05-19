@@ -163,7 +163,7 @@ export default function NotesTable() {
                         <div className="custom-scrollbar h-[450px] overflow-y-auto px-2 pb-3">
                             <div className="mt-3">
                                 <h5 className="mb-5 text-lg xl:text-xl font-medium text-gray-800 dark:text-white/90 lg:mb-8 flex flex-row justify-between">
-                                    <p>{openedNote.title}</p>
+                                    {openedNote.title}
                                 </h5>
 
                                 <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-2">
@@ -213,7 +213,10 @@ export default function NotesTable() {
                             <Button
                                 size="sm"
                                 variant="outline"
-                                onClick={closeModal}
+                                onClick={() => {
+                                    setOpenedNote(null);
+                                    closeModal();
+                                }}
                             >
                                 Kapat
                             </Button>
